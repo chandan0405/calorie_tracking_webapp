@@ -9,9 +9,8 @@ import { useSelector } from 'react-redux';
 
 
 const Home = () => {
-    const { selectedFoods } = useSelector((state) => state.food)
     const meals = useSelector((state) => state.meals);
-    console.log(selectedFoods)
+    console.log(meals)
     return (
         <>
             <Header />

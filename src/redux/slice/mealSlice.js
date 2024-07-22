@@ -1,4 +1,3 @@
-
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = [
@@ -24,12 +23,13 @@ const mealSlice = createSlice({
   initialState,
   reducers: {
     addFoodToMeal: (state, action) => {
-      const { mealType, food } = action.payload;
-      const meal = state.find((meal) => meal.mealType === mealType);
+      const { consumerMealType, food } = action.payload;
+      const meal = state.find((meal) => meal.mealType === consumerMealType);
       if (meal) {
         meal.items.push(food);
         meal.totalCalories += food.calories;
       }
+      console.log('State after update:', JSON.stringify(state, null, 2));
     },
   },
 });

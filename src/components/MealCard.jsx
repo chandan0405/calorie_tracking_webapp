@@ -9,6 +9,7 @@ const MealCard = ({ mealType, totalCalories, items }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { selectedFoods } = useSelector((state) => state.food);
+    
     const handleCardClick = () => {
         dispatch(setSelectedFoods(mealType));
         navigate(`/search`);
@@ -23,7 +24,7 @@ const MealCard = ({ mealType, totalCalories, items }) => {
             <ul>
             {items.map((item) => (
                 <li key={item.id}>{item.name}</li>
-                
+
                 ))}
             </ul>
         </div>

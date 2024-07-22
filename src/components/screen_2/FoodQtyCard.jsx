@@ -3,9 +3,12 @@ import { Button, Modal, Container, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../../css/foodQty.css";
 import { useDispatch, useSelector } from 'react-redux';
+import { addFoodToMeal } from '../../redux/slice/mealSlice';
 
 const FoodQtyCard = ({ show, onClose, initialNutritionalValues }) => {
-  const { selectedFoods, meals,addFoodToMeal } = useSelector(state => state.food);
+  const { selectedFoods } = useSelector(state => state.food);
+  const meals = useSelector((state) => state.meals);
+  console.log(selectedFoods)
   const dispatch= useDispatch();
   const [quantity, setQuantity] = useState(1);
   const [nutritionalValues, setNutritionalValues] = useState(initialNutritionalValues);
@@ -37,7 +40,7 @@ const FoodQtyCard = ({ show, onClose, initialNutritionalValues }) => {
     };
     console.log(foodData)
     console.log(selectedFoods)
-    dispatch(addFoodToMeal(selectedFoods, foodData))
+    dispatch(addFoodToMeal({ consumerMealType: selectedFoods, food: foodData }));
     console.log(meals)
     onClose(true);
   }
