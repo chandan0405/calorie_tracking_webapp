@@ -23,12 +23,8 @@
   .meal-card ul {
     list-style-type: none;
     padding: 0;
+    display: flex;
+    flex-direction: column;
    
   }
   
-  .meal-card li {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 5px;
-    
-  }

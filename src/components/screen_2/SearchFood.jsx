@@ -16,14 +16,16 @@ const SearchFood = () => {
   const [results, setResults] = useState([]);
   const navigate = useNavigate();
   const [isFocussed, setIsFocussed] = useState(true);
-  const { selectedFoods } = useSelector((state) => state.food);
-  const meals = useSelector((state) => state.meals);
+  // const meals = useSelector((state) => state.meals);
   const dispatch = useDispatch();
   const [nutrition, setNutrition] = useState(null);
   const [showQtyCard, setShowQtyCard] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [loadingNutrition, setLoadingNutrition] = useState(false);
-
+  const [tempMealItem, setTempMealItem] = useState([]);
+  const { selectedDate, selectedFoods } = useSelector((state) => state.food);
+  console.log(selectedFoods)
+  console.log(selectedDate.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' }))
+  
   const fetchResults = useCallback(
     debounce(async (query) => {
       if (query) {
@@ -50,7 +52,6 @@ const SearchFood = () => {
   );
 
   const fetchNutrition = async (foodName) => {
-    setLoadingNutrition(true);
     try {
       const response = await axios.post('https://trackapi.nutritionix.com/v2/natural/nutrients', {
         query: foodName,
@@ -68,13 +69,13 @@ const SearchFood = () => {
     } catch (error) {
       console.error('Error fetching nutrition data:', error);
     } finally {
-      setLoadingNutrition(false);
     }
   };
 
   useEffect(() => {
     fetchResults(query);
   }, [query, fetchResults]);
+
 
   const handleSearch = (e) => {
     setIsFocussed(false);
@@ -103,6 +104,12 @@ const SearchFood = () => {
     ))
   ), [results]);
 
+
+  const saveToTempMeal = (foodData) => {
+    setTempMealItem(prevItems => [...prevItems, foodData]);
+    setShowQtyCard(false);
+  };
+
   return (
     <>
       <DatePickerComp />
@@ -124,10 +131,17 @@ const SearchFood = () => {
       {loading ? <p>Loading...</p> : <ul className="results-list">{memoizedResults}</ul>}
 
       <div className='foodcard__container'>
-        {isFocussed && meals.filter((meal) => meal.mealType === selectedFoods).map((meal) => (
-          meal.items.map((item, index) => (
-            <FoodCard key={index} {...item} />
-          ))
+        {isFocussed && tempMealItem?.map((item, index) => (
+          <FoodCard
+            key={index}
+            image={item.image}
+            name={item.name}
+            calories={item.calories}
+            weight={item.weight}
+            protein={item.protein}
+            carbs={item.carbs}
+            fat={item.fat}
+          />
         ))}
       </div>
       <button onClick={handleDone} className='save-btn'>Done</button>
@@ -145,6 +159,8 @@ const SearchFood = () => {
             image: nutrition.photo.thumb,
             name: nutrition.food_name,
           }}
+          onSave={saveToTempMeal}
+          clearSearch={clearSearch}
         />
       )}
     </>

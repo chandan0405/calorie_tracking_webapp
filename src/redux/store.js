@@ -8,6 +8,7 @@ const store = configureStore({
     food: foodReducer,
     meals: mealReducer,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });
 
 export default store;

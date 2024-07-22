@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 const Header = () => {
   const selectedDate = useSelector((state) => state.food.selectedDate);
   const [showDatePicker, setShowDatePicker] = useState(false);
-
+  console.log(selectedDate)
   const getFormattedDate = () => {
     const today = new Date();
     if (
@@ -18,7 +18,7 @@ const Header = () => {
       return `Today, ${today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
     } else {
       return selectedDate.toLocaleDateString('en-US', {
-        weekday: 'short',
+        weekday: 'numeric',
         month: 'short',
         day: 'numeric',
       });

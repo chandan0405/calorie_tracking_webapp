@@ -9,7 +9,7 @@ const MealCard = ({ mealType, totalCalories, items }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { selectedFoods } = useSelector((state) => state.food);
-    
+
     const handleCardClick = () => {
         dispatch(setSelectedFoods(mealType));
         navigate(`/search`);
@@ -22,13 +22,17 @@ const MealCard = ({ mealType, totalCalories, items }) => {
             <h2>{mealType}</h2>
             <p className="total-calories">{totalCalories} calories</p>
             <ul>
-            {items.map((item) => (
-                <li key={item.id}>{item.name}</li>
-
-                ))}
+                {items.map((item,index) => (
+                    <li key={index} className="d-flex justify-content-between">
+                        <span>{item.name}</span>
+                        <span>{item.calories} cal</span>
+                    </li>
+                ))
+                }
             </ul>
         </div>
     );
 };
 
 export default MealCard;
+

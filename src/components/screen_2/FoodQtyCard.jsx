@@ -5,11 +5,10 @@ import "../../css/foodQty.css";
 import { useDispatch, useSelector } from 'react-redux';
 import { addFoodToMeal } from '../../redux/slice/mealSlice';
 
-const FoodQtyCard = ({ show, onClose, initialNutritionalValues }) => {
+const FoodQtyCard = ({ show, onClose, initialNutritionalValues, onSave ,clearSearch}) => {
   const { selectedFoods } = useSelector(state => state.food);
   const meals = useSelector((state) => state.meals);
-  console.log(selectedFoods)
-  const dispatch= useDispatch();
+  const dispatch = useDispatch();
   const [quantity, setQuantity] = useState(1);
   const [nutritionalValues, setNutritionalValues] = useState(initialNutritionalValues);
 
@@ -28,6 +27,7 @@ const FoodQtyCard = ({ show, onClose, initialNutritionalValues }) => {
       setQuantity(quantity - 1);
     }
   };
+
   const saveNutrition = () => {
     const foodData = {
       calories: Math.floor(nutritionalValues.calories),
@@ -38,12 +38,11 @@ const FoodQtyCard = ({ show, onClose, initialNutritionalValues }) => {
       name: initialNutritionalValues.name,
       image: initialNutritionalValues.image,
     };
-    console.log(foodData)
-    console.log(selectedFoods)
-    dispatch(addFoodToMeal({ consumerMealType: selectedFoods, food: foodData }));
-    console.log(meals)
-    onClose(true);
+    onSave(foodData);
+    clearSearch()
+    onClose();
   }
+
   return (
     <Modal show={show} onHide={onClose} className='modal_container'>
       <Modal.Body>

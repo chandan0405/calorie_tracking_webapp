@@ -10,7 +10,6 @@ import { useSelector } from 'react-redux';
 
 const Home = () => {
     const meals = useSelector((state) => state.meals);
-    console.log(meals)
     return (
         <>
             <Header />

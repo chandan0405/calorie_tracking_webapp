@@ -24,7 +24,8 @@ const mealSlice = createSlice({
   reducers: {
     addFoodToMeal: (state, action) => {
       const { consumerMealType, food } = action.payload;
-      const meal = state.find((meal) => meal.mealType === consumerMealType);
+      const meal = state.find((meal) => meal.mealType.toLowerCase() === consumerMealType.toLowerCase());
+      console.log(meal)
       if (meal) {
         meal.items.push(food);
         meal.totalCalories += food.calories;

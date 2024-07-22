@@ -1,4 +1,4 @@
-// src/redux/slices/foodSlice.js
+
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
@@ -11,11 +11,9 @@ const foodSlice = createSlice({
   initialState,
   reducers: {
     setSelectedDate: (state, action) => {
-      console.log(state, action)
       state.selectedDate = action.payload;
     },
     setSelectedFoods: (state, action) => {
-      console.log(state, action)
       state.selectedFoods = action.payload;
     },
   },
