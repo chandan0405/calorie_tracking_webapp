@@ -8,14 +8,11 @@ import { setSelectedFoods } from '../redux/slice/foodSlice';
 const MealCard = ({ mealType, totalCalories, items }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { selectedFoods } = useSelector((state) => state.food);
 
     const handleCardClick = () => {
         dispatch(setSelectedFoods(mealType));
         navigate(`/search`);
     };
-
-    console.log(selectedFoods)
 
     return (
         <div className="meal-card" onClick={handleCardClick}>

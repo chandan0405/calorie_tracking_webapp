@@ -9,6 +9,7 @@ import { debounce } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import FoodCard from './FoodCard';
 import FoodQtyCard from './FoodQtyCard';
+import { addFoodToMeal } from '../../redux/slice/mealSlice';
 
 const SearchFood = () => {
   const [showClear, setShowClear] = useState(false);
@@ -16,16 +17,14 @@ const SearchFood = () => {
   const [results, setResults] = useState([]);
   const navigate = useNavigate();
   const [isFocussed, setIsFocussed] = useState(true);
-  // const meals = useSelector((state) => state.meals);
+  const meals = useSelector((state) => state.meals);
   const dispatch = useDispatch();
   const [nutrition, setNutrition] = useState(null);
   const [showQtyCard, setShowQtyCard] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tempMealItem, setTempMealItem] = useState([]);
   const { selectedDate, selectedFoods } = useSelector((state) => state.food);
-  console.log(selectedFoods)
-  console.log(selectedDate.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' }))
-  
+
   const fetchResults = useCallback(
     debounce(async (query) => {
       if (query) {
@@ -74,7 +73,7 @@ const SearchFood = () => {
 
   useEffect(() => {
     fetchResults(query);
-  }, [query, fetchResults]);
+  }, [query, fetchResults, meals]);
 
 
   const handleSearch = (e) => {
@@ -85,9 +84,41 @@ const SearchFood = () => {
     setShowClear(value.length > 0);
   };
 
-  const handleDone = () => {
+  const handleSave = () => {
+    const currentDate = selectedDate.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    let currentMeals = JSON.parse(localStorage.getItem(currentDate)) || { breakfast: [], lunch: [], dinner: [] };
+    // Fetch the current array for the selected meal type
+    let mealArray;
+    if (selectedFoods.toLowerCase() === 'breakfast') {
+      mealArray = currentMeals.breakfast||[];
+    } else if (selectedFoods.toLowerCase() === 'lunch') {
+      mealArray = currentMeals.lunch||[];
+    } else if (selectedFoods.toLowerCase() === 'dinner') {
+      mealArray = currentMeals.dinner||[];
+    }
+  
+    // Append the new items to the meal array
+    console.log(mealArray)
+    tempMealItem.forEach((item) => {
+      mealArray.push(item);
+      dispatch(addFoodToMeal({ consumerMealType: selectedFoods, food: item }));
+    });
+  
+    // Update the currentMeals object
+    if (selectedFoods.toLowerCase() === 'breakfast') {
+      currentMeals.breakfast = mealArray;
+    } else if (selectedFoods.toLowerCase() === 'lunch') {
+      currentMeals.lunch = mealArray;
+    } else if (selectedFoods.toLowerCase() === 'dinner') {
+      currentMeals.dinner = mealArray;
+    }
+  
+    // Save the updated meals object back to localStorage
+    localStorage.setItem(currentDate, JSON.stringify(currentMeals));
     navigate('/');
   };
+  
+  
 
   const clearSearch = () => {
     setQuery('');
@@ -103,7 +134,6 @@ const SearchFood = () => {
       </li>
     ))
   ), [results]);
-
 
   const saveToTempMeal = (foodData) => {
     setTempMealItem(prevItems => [...prevItems, foodData]);
@@ -144,7 +174,7 @@ const SearchFood = () => {
           />
         ))}
       </div>
-      <button onClick={handleDone} className='save-btn'>Done</button>
+      <button onClick={handleSave} className='save-btn'>Done</button>
 
       {nutrition && (
         <FoodQtyCard

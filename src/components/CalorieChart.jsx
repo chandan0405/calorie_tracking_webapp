@@ -4,13 +4,8 @@ import 'react-circular-progressbar/dist/styles.css';
 import "../css/calorie.css";
 
 const CalorieChart = () => {
-  const currentDate = new Date().toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric'
-  });
 
   const progressValue = 50; // Static data
-
   return (
     <div className="calorie-chart">
       <div className="body">
@@ -22,7 +17,7 @@ const CalorieChart = () => {
               rotation: 1 / 2 + 1 / 8,
               strokeLinecap: "butt",
               trailColor: "#eee",
-              pathColor: "blue",
+              pathColor: "#717dfa",
               textColor: "black"
             })}
           >
