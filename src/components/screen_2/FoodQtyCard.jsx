@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Container, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import "../../css/foodQty.css";
-import { useDispatch, useSelector } from 'react-redux';
-import { addFoodToMeal } from '../../redux/slice/mealSlice';
 
 const FoodQtyCard = ({ show, onClose, initialNutritionalValues, onSave ,clearSearch}) => {
-  const { selectedFoods } = useSelector(state => state.food);
-  const meals = useSelector((state) => state.meals);
-  const dispatch = useDispatch();
   const [quantity, setQuantity] = useState(1);
   const [nutritionalValues, setNutritionalValues] = useState(initialNutritionalValues);
 
