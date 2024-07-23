@@ -1,10 +1,21 @@
 // Footer.js
 import React from 'react';
 import '../css/Footer.css';
-
+import { useNavigate } from 'react-router-dom';
 import { FaHome, FaChartLine, FaPlusCircle } from 'react-icons/fa';
 
+
+
 const Footer = () => {
+    const navigate = useNavigate();
+
+    const handleChart = () => {
+        navigate('/chart');
+    }
+    const handleToHome = () => {
+        navigate('/');
+
+    }
     return (
         <>
             <div className="footer">
@@ -12,7 +23,7 @@ const Footer = () => {
                     <FaHome />
                     <span>Home</span>
                 </button>
-                <button className="footer-button">
+                <button className="footer-button" onClick={handleChart}>
                     <FaChartLine />
                     <span>Analytics</span>
                 </button>

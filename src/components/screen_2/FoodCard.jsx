@@ -29,9 +29,12 @@ const FoodCard = ({ image, name, calories, weight, protein, carbs, fat }) => {
         </Box>
     );
 
+    const handleEditFood=()=>{
+
+    }
     return (
         <>
-            <div className="food-card">
+            <div className="food-card" onClick={handleEditFood}>
                 <div className="food-card-header">
                     <img src={image} alt={name} className="food-image" />
                     <div className="food-info">

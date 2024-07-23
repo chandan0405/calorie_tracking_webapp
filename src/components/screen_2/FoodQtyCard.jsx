@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Container, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import "../../css/foodQty.css";
 
 const FoodQtyCard = ({ show, onClose, initialNutritionalValues, onSave ,clearSearch}) => {
   const [quantity, setQuantity] = useState(1);

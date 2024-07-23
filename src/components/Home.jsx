@@ -26,10 +26,11 @@ const Home = () => {
     useEffect(() => {
         setMeals(fetchMeals(selectedDate));
     }, [selectedDate]);
+    console.log(meals)
     return (
         <>
             <Header />
-            <CalorieChart />
+            <CalorieChart meals={meals} />
             <div className="main">
                 {meals?.map((meal, index) => (
                     <MealCard
