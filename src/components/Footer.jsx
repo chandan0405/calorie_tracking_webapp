@@ -19,7 +19,7 @@ const Footer = () => {
     return (
         <>
             <div className="footer">
-                <button className="footer-button">
+                <button className="footer-button" onClick={handleToHome}>
                     <FaHome />
                     <span>Home</span>
                 </button>

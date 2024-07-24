@@ -1,68 +1,71 @@
-import React, { useState, useEffect } from 'react';
+// src/components/FoodQtyCard.js
+import React, { useState, useEffect } from 'react'; // Import useEffect
 import { Button, Modal, Container, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../../css/foodQty.css";
+import { useDispatch } from 'react-redux'; 
+import { addFoodItem, updateFoodItem } from '../../redux/slice/tempMealSlice'; 
 
-const FoodQtyCard = ({ show, onClose, initialNutritionalValues, onSave ,clearSearch}) => {
-  const [quantity, setQuantity] = useState(1);
-  const [nutritionalValues, setNutritionalValues] = useState(initialNutritionalValues);
+const FoodQtyCard = ({ show, onClose, initialNutritionalValues, clearSearch, currQuantity }) => {
+  console.log(currQuantity)
+  const dispatch = useDispatch();
+  const [quantity, setQuantity] = useState(currQuantity || 1);
 
   useEffect(() => {
-    setNutritionalValues({
-      calories: initialNutritionalValues.calories * quantity,
-      protein: initialNutritionalValues.protein * quantity,
-      carbs: initialNutritionalValues.carbs * quantity,
-      weight: initialNutritionalValues.weight * quantity,
-    });
-  }, [quantity, initialNutritionalValues]);
-
-  const handleIncrease = () => setQuantity(quantity + 1);
-  const handleDecrease = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
+    if (initialNutritionalValues.quantity) {
+      setQuantity(initialNutritionalValues.quantity);
     }
+  }, [initialNutritionalValues]); 
+
+  const handleIncrease = () => setQuantity((prevQuantity) => prevQuantity + 1);
+  const handleDecrease = () => {
+    setQuantity((prevQuantity) => Math.max(prevQuantity - 1, 1));
   };
 
   const saveNutrition = () => {
     const foodData = {
-      calories: Math.floor(nutritionalValues.calories),
-      protein: Math.floor(nutritionalValues.protein),
-      carbs: Math.floor(nutritionalValues.carbs),
-      weight: nutritionalValues.weight,
-      fat: Math.floor(initialNutritionalValues.fat),
-      name: initialNutritionalValues.name,
-      image: initialNutritionalValues.image,
+      ...initialNutritionalValues,
+      quantity,
+      calories: initialNutritionalValues.calories * quantity,
+      protein: initialNutritionalValues.protein * quantity,
+      carbs: initialNutritionalValues.carbs * quantity,
+      weight: initialNutritionalValues.weight * quantity,
     };
-    onSave(foodData);
-    clearSearch()
+    
+    if (initialNutritionalValues.id) {
+      dispatch(updateFoodItem(foodData));
+    } else {
+      dispatch(addFoodItem(foodData));
+    }
+    clearSearch();
     onClose();
-  }
+  };
 
   return (
     <Modal show={show} onHide={onClose} className='modal_container'>
-      <Modal.Body>
+      <Modal.Body className='modal-body'>
         <Container>
           <Row className="mb-3">
             <Col>
               <div className="border p-2 text-center">
-                <strong>Calories:</strong> {nutritionalValues.calories}
+                <strong>Calories:</strong> {initialNutritionalValues.calories * quantity}
               </div>
             </Col>
             <Col>
               <div className="border p-2 text-center">
-                <strong>Protein:</strong> {nutritionalValues.protein}g
+                <strong>Protein:</strong> {initialNutritionalValues.protein * quantity}g
               </div>
             </Col>
           </Row>
           <Row className="mb-3">
             <Col>
               <div className="border p-2 text-center">
-                <strong>Carbs:</strong> {nutritionalValues.carbs}g
+                <strong>Carbs:</strong> {initialNutritionalValues.carbs * quantity}g
               </div>
             </Col>
             <Col>
               <div className="border p-2 text-center">
-                <strong>Weight:</strong> {nutritionalValues.weight}g
+                <strong>Weight:</strong> {initialNutritionalValues.weight * quantity}g
               </div>
             </Col>
           </Row>
@@ -73,7 +76,7 @@ const FoodQtyCard = ({ show, onClose, initialNutritionalValues, onSave ,clearSea
             <Button variant="secondary" onClick={handleDecrease}>
               -
             </Button>
-            <span>{quantity}</span>
+            <span>{quantity}</span> {/* Show local quantity */}
             <Button variant="secondary" onClick={handleIncrease}>
               +
             </Button>

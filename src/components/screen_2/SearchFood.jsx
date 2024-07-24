@@ -1,3 +1,4 @@
+// src/components/SearchFood.js
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { IoSearch } from "react-icons/io5";
 import "../../css/search.css";
@@ -9,7 +10,7 @@ import { debounce } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import FoodCard from './FoodCard';
 import FoodQtyCard from './FoodQtyCard';
-import { addFoodToMeal } from '../../redux/slice/mealSlice';
+import { addFoodItem } from '../../redux/slice/tempMealSlice';
 
 const SearchFood = () => {
   const [showClear, setShowClear] = useState(false);
@@ -22,7 +23,7 @@ const SearchFood = () => {
   const [nutrition, setNutrition] = useState(null);
   const [showQtyCard, setShowQtyCard] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [tempMealItem, setTempMealItem] = useState([]);
+  const tempMealItems = useSelector((state) => state.tempMeal.tempMealData);
   const { selectedDate, selectedFoods } = useSelector((state) => state.food);
 
   const fetchResults = useCallback(
@@ -75,7 +76,6 @@ const SearchFood = () => {
     fetchResults(query);
   }, [query, fetchResults, meals]);
 
-
   const handleSearch = (e) => {
     setIsFocussed(false);
     e.preventDefault();
@@ -84,10 +84,9 @@ const SearchFood = () => {
     setShowClear(value.length > 0);
   };
 
-  const handleSave = () => {
+  const handleSave = () => { 
     const currentDate = selectedDate.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
     let currentMeals = JSON.parse(localStorage.getItem(currentDate)) || { breakfast: [], lunch: [], dinner: [] };
-    // Fetch the current array for the selected meal type
     let mealArray;
     if (selectedFoods.toLowerCase() === 'breakfast') {
       mealArray = currentMeals.breakfast||[];
@@ -96,15 +95,9 @@ const SearchFood = () => {
     } else if (selectedFoods.toLowerCase() === 'dinner') {
       mealArray = currentMeals.dinner||[];
     }
-  
-    // Append the new items to the meal array
-    console.log(mealArray)
-    tempMealItem.forEach((item) => {
+    tempMealItems?.forEach((item) => {
       mealArray.push(item);
-      dispatch(addFoodToMeal({ consumerMealType: selectedFoods, food: item }));
     });
-  
-    // Update the currentMeals object
     if (selectedFoods.toLowerCase() === 'breakfast') {
       currentMeals.breakfast = mealArray;
     } else if (selectedFoods.toLowerCase() === 'lunch') {
@@ -112,13 +105,10 @@ const SearchFood = () => {
     } else if (selectedFoods.toLowerCase() === 'dinner') {
       currentMeals.dinner = mealArray;
     }
-  
-    // Save the updated meals object back to localStorage
     localStorage.setItem(currentDate, JSON.stringify(currentMeals));
     navigate('/');
+
   };
-  
-  
 
   const clearSearch = () => {
     setQuery('');
@@ -136,7 +126,8 @@ const SearchFood = () => {
   ), [results]);
 
   const saveToTempMeal = (foodData) => {
-    setTempMealItem(prevItems => [...prevItems, foodData]);
+    console.log(foodData)
+    dispatch(addFoodItem(foodData));
     setShowQtyCard(false);
   };
 
@@ -161,9 +152,9 @@ const SearchFood = () => {
       {loading ? <p>Loading...</p> : <ul className="results-list">{memoizedResults}</ul>}
 
       <div className='foodcard__container'>
-        {isFocussed && tempMealItem?.map((item, index) => (
+        {isFocussed && tempMealItems?.map((item, index) => (
           <FoodCard
-            key={index}
+            key={item.id}
             image={item.image}
             name={item.name}
             calories={item.calories}
@@ -171,11 +162,13 @@ const SearchFood = () => {
             protein={item.protein}
             carbs={item.carbs}
             fat={item.fat}
+            id={item.id}
+            currQuantity={item.quantity}
           />
         ))}
       </div>
       <button onClick={handleSave} className='save-btn'>Done</button>
-
+      <div className='foodqty_modal_container'>
       {nutrition && (
         <FoodQtyCard
           show={showQtyCard}
@@ -193,6 +186,7 @@ const SearchFood = () => {
           clearSearch={clearSearch}
         />
       )}
+      </div>
     </>
   );
 };

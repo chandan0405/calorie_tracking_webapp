@@ -23,7 +23,25 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
+    max-width: 80px;
+    cursor: pointer;
+    border: none;
+    border-radius: 20px;
   }
+  .date-picker-header select{
+    text-indent: 1px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+
+  }
+  select::-ms-expand{
+    display: none;
+    margin-right: 4px;
+  }
+  select:focus{
+    outline: none;
+  }
+
   
   .calendar-button {
     display: flex;

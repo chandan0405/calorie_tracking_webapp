@@ -11,6 +11,7 @@
     margin: auto;
     margin-top: 20px;
     position: relative;
+    cursor: pointer;
   }
   
   .food-card-header {
