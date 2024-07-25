@@ -34,10 +34,9 @@
     background-color: #1e90ff;
     color: white;
     height: 40px;
-    width: 380px;
+    width: 370px;
     left: 0;
     margin-bottom: 30px;
-    margin-left: 6px;
     border-radius: 12px;
 }
 
@@ -55,7 +54,6 @@
     position: absolute;
     display: flex;
     flex-direction: column;
-    align-items: center;
     margin-top: 10px;
     width: 100%;
 }
@@ -67,6 +65,7 @@
     font-weight: 600;
     font-size: 16px;
     cursor: pointer;
+    text-transform: capitalize;
 }
 
 .foodcard__container {
@@ -78,4 +77,8 @@
 .results-list li:hover {
     background-color: #e3e4e6;
     border-radius: 12px;
+}
+.loading-Item{
+    text-align: center;
+    font-size: 20px;
 }

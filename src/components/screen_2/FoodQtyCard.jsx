@@ -1,38 +1,36 @@
-// src/components/FoodQtyCard.js
-import React, { useState, useEffect } from 'react'; // Import useEffect
+import React, { useState, useEffect } from 'react';
 import { Button, Modal, Container, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../../css/foodQty.css";
-import { useDispatch } from 'react-redux'; 
-import { addFoodItem, updateFoodItem } from '../../redux/slice/tempMealSlice'; 
+import { useDispatch } from 'react-redux';
+import { addFoodItem, updateFoodItem } from '../../redux/slice/tempMealSlice';
 
-const FoodQtyCard = ({ show, onClose, initialNutritionalValues, clearSearch, currQuantity }) => {
-  console.log(currQuantity)
+const FoodQtyCard = ({ show, onClose, initialNutritionalValues, clearSearch, id }) => {
   const dispatch = useDispatch();
-  const [quantity, setQuantity] = useState(currQuantity || 1);
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     if (initialNutritionalValues.quantity) {
       setQuantity(initialNutritionalValues.quantity);
     }
-  }, [initialNutritionalValues]); 
+  }, [initialNutritionalValues]);
 
-  const handleIncrease = () => setQuantity((prevQuantity) => prevQuantity + 1);
+  const handleIncrease = () => setQuantity((quantity) => quantity + 1);
   const handleDecrease = () => {
-    setQuantity((prevQuantity) => Math.max(prevQuantity - 1, 1));
+    setQuantity((quantity) => Math.max(quantity - 1, 1));
   };
 
   const saveNutrition = () => {
     const foodData = {
       ...initialNutritionalValues,
-      quantity,
+      quantity: quantity,
       calories: initialNutritionalValues.calories * quantity,
       protein: initialNutritionalValues.protein * quantity,
       carbs: initialNutritionalValues.carbs * quantity,
       weight: initialNutritionalValues.weight * quantity,
+      id: id // Preserve the unique ID
     };
-    
-    if (initialNutritionalValues.id) {
+    if (id) {
       dispatch(updateFoodItem(foodData));
     } else {
       dispatch(addFoodItem(foodData));

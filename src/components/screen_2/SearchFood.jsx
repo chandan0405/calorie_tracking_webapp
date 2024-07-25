@@ -1,4 +1,3 @@
-// src/components/SearchFood.js
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { IoSearch } from "react-icons/io5";
 import "../../css/search.css";
@@ -10,7 +9,7 @@ import { debounce } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import FoodCard from './FoodCard';
 import FoodQtyCard from './FoodQtyCard';
-import { addFoodItem } from '../../redux/slice/tempMealSlice';
+import { addFoodItem, resetTempMeals } from '../../redux/slice/tempMealSlice';
 
 const SearchFood = () => {
   const [showClear, setShowClear] = useState(false);
@@ -24,6 +23,7 @@ const SearchFood = () => {
   const [showQtyCard, setShowQtyCard] = useState(false);
   const [loading, setLoading] = useState(false);
   const tempMealItems = useSelector((state) => state.tempMeal.tempMealData);
+
   const { selectedDate, selectedFoods } = useSelector((state) => state.food);
 
   const fetchResults = useCallback(
@@ -84,16 +84,16 @@ const SearchFood = () => {
     setShowClear(value.length > 0);
   };
 
-  const handleSave = () => { 
+  const handleSave = () => {
     const currentDate = selectedDate.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
     let currentMeals = JSON.parse(localStorage.getItem(currentDate)) || { breakfast: [], lunch: [], dinner: [] };
     let mealArray;
     if (selectedFoods.toLowerCase() === 'breakfast') {
-      mealArray = currentMeals.breakfast||[];
+      mealArray = currentMeals.breakfast || [];
     } else if (selectedFoods.toLowerCase() === 'lunch') {
-      mealArray = currentMeals.lunch||[];
+      mealArray = currentMeals.lunch || [];
     } else if (selectedFoods.toLowerCase() === 'dinner') {
-      mealArray = currentMeals.dinner||[];
+      mealArray = currentMeals.dinner || [];
     }
     tempMealItems?.forEach((item) => {
       mealArray.push(item);
@@ -107,7 +107,7 @@ const SearchFood = () => {
     }
     localStorage.setItem(currentDate, JSON.stringify(currentMeals));
     navigate('/');
-
+    dispatch(resetTempMeals());
   };
 
   const clearSearch = () => {
@@ -126,9 +126,19 @@ const SearchFood = () => {
   ), [results]);
 
   const saveToTempMeal = (foodData) => {
-    console.log(foodData)
     dispatch(addFoodItem(foodData));
     setShowQtyCard(false);
+  };
+
+  const handleEdit = (id) => {
+    const item = tempMealItems.find(item => item.id === id);
+    if (item) {
+      setNutrition({
+        ...item,
+        id: id,
+      });
+      setShowQtyCard(true);
+    }
   };
 
   return (
@@ -149,7 +159,7 @@ const SearchFood = () => {
         {showClear && <button className="clear-button" onClick={clearSearch}>✖</button>}
       </div>
 
-      {loading ? <p>Loading...</p> : <ul className="results-list">{memoizedResults}</ul>}
+      {loading ? <p className='loading-Item'>Loading...</p> : <ul className="results-list">{memoizedResults}</ul>}
 
       <div className='foodcard__container'>
         {isFocussed && tempMealItems?.map((item, index) => (
@@ -163,29 +173,33 @@ const SearchFood = () => {
             carbs={item.carbs}
             fat={item.fat}
             id={item.id}
-            currQuantity={item.quantity}
+            quantity={item.quantity}
+            onEdit={handleEdit}
           />
         ))}
       </div>
       <button onClick={handleSave} className='save-btn'>Done</button>
       <div className='foodqty_modal_container'>
-      {nutrition && (
-        <FoodQtyCard
-          show={showQtyCard}
-          onClose={() => setShowQtyCard(false)}
-          initialNutritionalValues={{
-            calories: Math.floor(nutrition.nf_calories),
-            protein: Math.floor(nutrition.nf_protein),
-            carbs: Math.floor(nutrition.nf_total_carbohydrate),
-            fat: Math.floor(nutrition.nf_total_fat),
-            weight: (nutrition.serving_weight_grams),
-            image: nutrition.photo.thumb,
-            name: nutrition.food_name,
-          }}
-          onSave={saveToTempMeal}
-          clearSearch={clearSearch}
-        />
-      )}
+        {nutrition && (
+          <FoodQtyCard
+            show={showQtyCard}
+            onClose={() => setShowQtyCard(false)}
+            initialNutritionalValues={{
+              calories: Math.floor(nutrition.nf_calories ||nutrition.calories),
+              protein: Math.floor(nutrition.nf_protein || nutrition.protein),
+              carbs: Math.floor(nutrition.nf_total_carbohydrate || nutrition.carbs),
+              fat: Math.floor(nutrition.nf_total_fat||nutrition.fat),
+              weight: Math.floor(nutrition.serving_weight_grams || nutrition.weight),
+              image: (nutrition.photo?.thumb || nutrition.image),
+              name: (nutrition.food_name ||nutrition.name),
+              quantity: (nutrition.quantity),
+              id: (nutrition.id) // Include the ID
+            }}
+            onSave={saveToTempMeal}
+            clearSearch={clearSearch}
+            id={nutrition.id} // Pass the ID to FoodQtyCard
+          />
+        )}
       </div>
     </>
   );
