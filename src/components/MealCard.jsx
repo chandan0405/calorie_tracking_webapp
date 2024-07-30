@@ -2,16 +2,18 @@
 import React from 'react';
 import '../css/MealCard.css';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedFoods } from '../redux/slice/foodSlice';
 
 const MealCard = ({ mealType, totalCalories, items }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const selectedDate = useSelector((state) => state.food.selectedDate);
 
     const handleCardClick = () => {
         dispatch(setSelectedFoods(mealType));
-        navigate(`/search`);
+        const formattedDate = selectedDate.toLocaleDateString('en-CA');
+        navigate(`/search/${formattedDate}`);
     };
 
     return (

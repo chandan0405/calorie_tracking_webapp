@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import FoodCard from './FoodCard';
 import FoodQtyCard from './FoodQtyCard';
 import { addFoodItem, resetTempMeals } from '../../redux/slice/tempMealSlice';
+import { setSelectedDate } from '../../redux/slice/foodSlice';
 
 const SearchFood = () => {
   const [showClear, setShowClear] = useState(false);
@@ -24,7 +25,14 @@ const SearchFood = () => {
   const [loading, setLoading] = useState(false);
   const tempMealItems = useSelector((state) => state.tempMeal.tempMealData);
   const { selectedFoods, selectedDate } = useSelector((state) => state.food)
+  const { date } = useParams();
 
+  useEffect(() => {
+    const parsedDate = new Date(date);
+    if (!isNaN(parsedDate)) {
+      dispatch(setSelectedDate(parsedDate));
+    }
+  }, [date, dispatch]);
 
   const fetchResults = useCallback(
     debounce(async (query) => {

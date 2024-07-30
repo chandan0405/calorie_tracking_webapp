@@ -5,17 +5,25 @@ import { FaCalendarAlt } from 'react-icons/fa';
 import '../css/datepicker.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSelectedDate } from '../redux/slice/foodSlice';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const DatePickerComp = () => {
   const selectedDate = useSelector((state) => state.food.selectedDate);
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [month, setMonth] = useState(selectedDate.toLocaleString('default', { month: 'long' }));
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleDateChange = (date) => {
     dispatch(setSelectedDate(date));
     setMonth(date.toLocaleString('default', { month: 'long' }));
     setIsOpen(false);
+    // Update the URL only if we are in the search route
+    if (location.pathname.startsWith('/search')) {
+      const formattedDate = date.toLocaleDateString('en-CA');
+      navigate(`/search/${formattedDate}`);
+    }
   };
 
   const toggleCalendar = () => {
@@ -59,7 +67,7 @@ export default DatePickerComp;
 export const RenderWeek = ({ selectedDate, onDateChange }) => {
   const startOfWeek = (date) => {
     const day = date.getDay();
-    const diff = date.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is Sunday
     return new Date(date.setDate(diff));
   };
 
