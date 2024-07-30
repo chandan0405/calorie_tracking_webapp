@@ -9,13 +9,16 @@ const CalorieChart = ({ meals }) => {
   const totalcarbs= Math.floor((totalcalories*0.45)/4);
   const totalprotein= Math.floor((totalcalories*0.25)/4);
 
-  const totalBurntCalories = meals.reduce((acc, meal) => acc + meal.totalCalories,
-    0);
-  const totalconsumedFat=Math.floor((totalBurntCalories*0.3)/9);
-  const totalconsumedProtein=Math.floor((totalBurntCalories*0.25)/4);
-  const totalconsumedCarbs=Math.floor((totalBurntCalories*0.45)/4);
+  const totalBurntCalories = meals?.reduce((acc, meal) => acc + meal.totalCalories,
+    0)||0;
+  const totalconsumedFat=Math.floor((totalBurntCalories*0.3)/9) ||0;
+  const totalconsumedProtein=Math.floor((totalBurntCalories*0.25)/4)||0;
+  const totalconsumedCarbs=Math.floor((totalBurntCalories*0.45)/4)||0;
 
-  const percentageProgressvalue= Math.floor((totalBurntCalories/totalcalories)*100)
+  const percentageProgressvalue= Math.floor((totalBurntCalories/totalcalories)*100)||0
+  const percentageProgressvalueOfProtein= Math.floor((totalconsumedProtein/totalprotein)*100)||0
+  const percentageProgressvalueofCarbs= Math.floor((totalconsumedCarbs/totalcarbs)*100)||0;
+  const percentageProgressvalueofFat= Math.floor((totalconsumedFat/totalfat)*100)||0;
 
   return (
     <div className="calorie-chart">
@@ -48,21 +51,21 @@ const CalorieChart = ({ meals }) => {
           <div className="progress-bar">
             <div className="label">Protein</div>
             <div className="bar">
-              <div className="fill_protein" style={{ width: '93%' }}></div>
+              <div className="fill_protein" style={{ width: `${percentageProgressvalueOfProtein}%` }}></div>
             </div>
             <div className="values">{totalconsumedProtein}/{totalprotein} g</div>
           </div>
           <div className="progress-bar">
             <div className="label">Fat</div>
             <div className="bar">
-              <div className="fill_fat" style={{ width: '88%' }}></div>
+              <div className="fill_fat" style={{ width: `${percentageProgressvalueofFat}%` }}></div>
             </div>
             <div className="values">{totalconsumedFat}/{totalfat} g</div>
           </div>
           <div className="progress-bar">
             <div className="label">Carbs</div>
             <div className="bar">
-              <div className="fill_carbs" style={{ width: '29%' }}></div>
+              <div className="fill_carbs" style={{ width: `${percentageProgressvalueofCarbs}%` }}></div>
             </div>
             <div className="values">{totalconsumedCarbs}/{totalcarbs} g</div>
           </div>

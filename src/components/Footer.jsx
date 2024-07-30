@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import '../css/Footer.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FaHome, FaChartLine, FaPlusCircle } from 'react-icons/fa';
 
-const Footer = () => {
+const Footer = ({ handleShowPopup }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  
-  // Determine active route for styling
+
   const isActiveRoute = (path) => location.pathname === path;
 
   const handleNavigation = (path) => {
@@ -30,7 +29,7 @@ const Footer = () => {
         <FaChartLine />
         <span>Analytics</span>
       </button>
-      <div className='btn-container'>
+      <div className='btn-container' onClick={handleShowPopup}>
         <button className="add-button">
           <FaPlusCircle className='add-icon' />
         </button>

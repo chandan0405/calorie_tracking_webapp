@@ -15,7 +15,6 @@ const tempMealSlice = createSlice({
         ...action.payload,
         id: nanoid(),
       };
-      console.log(newItem)
       state.tempMealData.push(newItem);
       }
     },

@@ -35,11 +35,19 @@ const mealSlice = createSlice({
         return meal;
       });
     },
+    addNewMeal: (state, action) => {
+      const newmeal = {
+        mealType: action.payload,
+        totalCalories: 0,
+        items: [],
+      }
+      return [...state, newmeal]
+
+    }
   },
 });
 
-export const { addFoodToMeal } = mealSlice.actions;
+export const { addFoodToMeal, addNewMeal } = mealSlice.actions;
 export default mealSlice.reducer;
 
 
-// console.log('State after update:', JSON.stringify(state, null, 2));

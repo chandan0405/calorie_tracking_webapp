@@ -26,6 +26,7 @@ const Header = () => {
   };
 
   const formattedDate = getFormattedDate();
+  
 
   return (
     <>

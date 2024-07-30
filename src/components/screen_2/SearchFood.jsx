@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { IoSearch } from "react-icons/io5";
 import "../../css/search.css";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import DatePickerComp from "../DatePickerComp";
 import MealToggle from "./MealToggle";
@@ -23,8 +23,8 @@ const SearchFood = () => {
   const [showQtyCard, setShowQtyCard] = useState(false);
   const [loading, setLoading] = useState(false);
   const tempMealItems = useSelector((state) => state.tempMeal.tempMealData);
+  const { selectedFoods, selectedDate } = useSelector((state) => state.food)
 
-  const { selectedDate, selectedFoods } = useSelector((state) => state.food);
 
   const fetchResults = useCallback(
     debounce(async (query) => {
@@ -86,26 +86,23 @@ const SearchFood = () => {
 
   const handleSave = () => {
     const currentDate = selectedDate.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    let currentMeals = JSON.parse(localStorage.getItem(currentDate)) || { breakfast: [], lunch: [], dinner: [] };
-    let mealArray;
-    if (selectedFoods.toLowerCase() === 'breakfast') {
-      mealArray = currentMeals.breakfast || [];
-    } else if (selectedFoods.toLowerCase() === 'lunch') {
-      mealArray = currentMeals.lunch || [];
-    } else if (selectedFoods.toLowerCase() === 'dinner') {
-      mealArray = currentMeals.dinner || [];
+    let currentMeals = JSON.parse(localStorage.getItem(currentDate)) || {};
+
+    // Convert the selected meal type to lowercase
+    const selectedMealType = selectedFoods.toLowerCase();
+    if (!currentMeals[selectedMealType]) {
+      currentMeals[selectedMealType] = [];
     }
+
+    // Append items to the meal type array
     tempMealItems?.forEach((item) => {
-      mealArray.push(item);
+      currentMeals[selectedMealType].push(item);
     });
-    if (selectedFoods.toLowerCase() === 'breakfast') {
-      currentMeals.breakfast = mealArray;
-    } else if (selectedFoods.toLowerCase() === 'lunch') {
-      currentMeals.lunch = mealArray;
-    } else if (selectedFoods.toLowerCase() === 'dinner') {
-      currentMeals.dinner = mealArray;
-    }
+
+    // Save the updated meals to localStorage
     localStorage.setItem(currentDate, JSON.stringify(currentMeals));
+
+    // Navigate and reset temporary meals
     navigate('/');
     dispatch(resetTempMeals());
   };
@@ -185,13 +182,13 @@ const SearchFood = () => {
             show={showQtyCard}
             onClose={() => setShowQtyCard(false)}
             initialNutritionalValues={{
-              calories: Math.floor(nutrition.nf_calories ||nutrition.calories),
+              calories: Math.floor(nutrition.nf_calories || nutrition.calories),
               protein: Math.floor(nutrition.nf_protein || nutrition.protein),
               carbs: Math.floor(nutrition.nf_total_carbohydrate || nutrition.carbs),
-              fat: Math.floor(nutrition.nf_total_fat||nutrition.fat),
+              fat: Math.floor(nutrition.nf_total_fat || nutrition.fat),
               weight: Math.floor(nutrition.serving_weight_grams || nutrition.weight),
               image: (nutrition.photo?.thumb || nutrition.image),
-              name: (nutrition.food_name ||nutrition.name),
+              name: (nutrition.food_name || nutrition.name),
               quantity: (nutrition.quantity),
               id: (nutrition.id) // Include the ID
             }}

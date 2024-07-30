@@ -8,7 +8,7 @@ const store = configureStore({
   reducer: {
     food: foodReducer,
     meals: mealReducer,
-    tempMeal: tempMealreducer
+    tempMeal: tempMealreducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });
